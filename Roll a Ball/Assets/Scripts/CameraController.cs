@@ -45,7 +45,7 @@ public class CameraController : MonoBehaviour
 
     private void RotateCamera()
     {
-        transform.LookAt(Player.transform);
+        transform.LookAt(Player.transform);         // https://forum.unity3d.com/threads/rotate-the-camera-around-the-object.47353/
     }
 
     private void AlignCamera()
