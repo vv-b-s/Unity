@@ -17,13 +17,11 @@ public class CameraController : MonoBehaviour
     #endregion
 
     #region Constants
-    const float MaxCameraXRotationAngle = 0.5f;
     const float CameraUpMovemetTriggerLimit = 0;
     #endregion
 
     #region Variables
     float cameraMovementRate = 0;
-    Vector3 cameraRotationRate = new Vector3(0, 0, 0);
     int movementDirection;      // -1 down | 0 none | 1 up
     #endregion
 
@@ -47,21 +45,7 @@ public class CameraController : MonoBehaviour
 
     private void RotateCamera()
     {
-        if (Player.transform.position.z < CameraUpMovemetTriggerLimit &&
-            this.transform.rotation.x < MaxCameraXRotationAngle &&
-            movementDirection==-1)
-        {
-            cameraRotationRate.x = cameraMovementRate;
-            transform.Rotate(cameraRotationRate);
-        }
-
-        else if(Player.transform.position.z < CameraUpMovemetTriggerLimit &&
-            this.transform.rotation.x <= MaxCameraXRotationAngle &&
-            movementDirection==1)
-        {
-            cameraRotationRate.x = -cameraMovementRate;
-            transform.Rotate(cameraRotationRate);
-        }
+        transform.LookAt(Player.transform);
     }
 
     private void AlignCamera()
