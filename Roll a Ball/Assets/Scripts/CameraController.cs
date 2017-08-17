@@ -21,24 +21,23 @@ public class CameraController : MonoBehaviour
     #endregion
 
     #region Variables
-    float cameraMovementRate = 0;
-    int movementDirection;      // -1 down | 0 none | 1 up
+    float cameraMovementRate;
+    Vector3 cameraMovement;
     #endregion
 
     // Use this for initialization
-    void Start () {
+    void Start ()
+    {
         offsetBetweenPlayerAndCamera = transform.position - Player.transform.position;
-         initOffsetBetweenPlayerAndWestWall = curentOffsetBetweenPlayerAndWestWall = Player.transform.position - WestWall.transform.position;
-	}
+        initOffsetBetweenPlayerAndWestWall = curentOffsetBetweenPlayerAndWestWall = Player.transform.position - WestWall.transform.position;
+        cameraMovementRate = 0;
+        cameraMovement = new Vector3(0, 0, 0);
+
+    }
 	
 	// Update is called once per frame
-	void LateUpdate () {
-        if (Input.GetKeyDown(KeyCode.DownArrow))
-            movementDirection = -1;
-        else if (Input.GetKeyDown(KeyCode.UpArrow))
-            movementDirection = 1;
-        else movementDirection = 0;
-
+	void LateUpdate () 
+    {
         AlignCamera();
         RotateCamera();
 	}
@@ -55,7 +54,9 @@ public class CameraController : MonoBehaviour
         {
             curentOffsetBetweenPlayerAndWestWall = Player.transform.position - WestWall.transform.position;
             cameraMovementRate = (initOffsetBetweenPlayerAndWestWall.z - curentOffsetBetweenPlayerAndWestWall.z) / 2;
-            transform.position += new Vector3(0, cameraMovementRate / 2, cameraMovementRate * 3);
+            cameraMovement.y = cameraMovementRate / 2;
+            cameraMovement.z = cameraMovementRate * 3;
+            transform.position += cameraMovement;
         }
     }
 }
