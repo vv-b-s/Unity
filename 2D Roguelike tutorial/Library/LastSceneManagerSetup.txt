@@ -1,0 +1,4 @@
+sceneSetups:
+- path: Assets/Scenes/BrainStew's version.unity
+  isLoaded: 1
+  isActive: 1
