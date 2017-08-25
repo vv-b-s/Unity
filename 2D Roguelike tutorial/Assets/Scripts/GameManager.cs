@@ -7,6 +7,8 @@ public class GameManager : MonoBehaviour {
 
     public BoardManager BoardScript;                 // Keeps the instance of the randomly generated map
     public static GameManager Instance = null;      // Singleton instance of GameManager. Only one game manager is needed.
+    public int PlayerFoodPoints = 100;
+    [HideInInspector] public bool PlayersTurn = true;       // With HideInInspector tag the variable is hidden from the inspector despite being public
 
     private int level = 5;
     private void Awake()
@@ -27,6 +29,11 @@ public class GameManager : MonoBehaviour {
     private void InitGame()
     {
         BoardScript.SetupScene(level);
+    }
+
+    public void GameOver()
+    {
+        enabled = false;
     }
 
     // Update is called once per frame
