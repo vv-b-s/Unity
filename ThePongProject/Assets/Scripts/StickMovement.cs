@@ -8,13 +8,13 @@ public class StickMovement : MonoBehaviour
 
     [HideInInspector] public Rigidbody2D Stick;
     public float Speed = 50;
-    private float initialX;
+    private float initRotation;
 
     // Use this for initialization
     void Start()
     {
         Stick = GetComponent<Rigidbody2D>();
-        initialX = Stick.position.x;
+        initRotation = Stick.rotation;
     }
 
     // Update is called once per frame
@@ -22,8 +22,8 @@ public class StickMovement : MonoBehaviour
     {
         float verticalMovement = Input.GetAxis("Vertical");
 
-        if (Stick.position.x != initialX)                               // fix x position if physics change it
-            Stick.position = new Vector2(initialX, Stick.position.y);
+        if (Stick.rotation!=initRotation)           // Keeps ridgid body from rotating spontaneously
+            Stick.rotation = initRotation;
 
         if (verticalMovement > 0 || verticalMovement < 0)
         {
