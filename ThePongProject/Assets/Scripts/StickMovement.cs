@@ -9,12 +9,14 @@ public class StickMovement : MonoBehaviour
     [HideInInspector] public Rigidbody2D Stick;
     public float Speed = 50;
     private float initRotation;
+    private float initX;
 
     // Use this for initialization
     void Start()
     {
         Stick = GetComponent<Rigidbody2D>();
         initRotation = Stick.rotation;
+        initX = Stick.position.x;
     }
 
     // Update is called once per frame
@@ -24,6 +26,9 @@ public class StickMovement : MonoBehaviour
 
         if (Stick.rotation!=initRotation)           // Keeps ridgid body from rotating spontaneously
             Stick.rotation = initRotation;
+
+        if (Stick.position.x != initX)             // Prevent stick from moving away if it colides with the ball
+            Stick.position = new Vector2(initX, Stick.position.y);
 
         if (verticalMovement > 0 || verticalMovement < 0)
         {
