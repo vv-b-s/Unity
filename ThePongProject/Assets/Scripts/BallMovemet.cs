@@ -26,6 +26,80 @@ public class BallMovemet : MonoBehaviour
         ballPreviousPosition = ball.position;
 	}
 
+    void FixedUpdate()
+    {
+        if (ball.position == ballPreviousPosition)
+        {
+            var yForce = YisIncrasing ? MinimalForce : -MinimalForce;
+            var xForce = XisIncreasing ? MinimalForce : -MinimalForce;
+            ball.AddForce(new Vector2(xForce, yForce));
+        }
+        DecideDirection();
+        ballPreviousPosition = ball.position;
+    }
+
+
+    private void NewGame()
+    {
+        ball.position = Vector2.zero;
+        ball.velocity = Vector2.zero;
+        ApplyRandomForce();
+    }
+
+    private void OnTriggerEnter2D(Collider2D collisionObject)
+    {
+        Vector2 force = new Vector2();
+        float xForce;
+        float yForce;
+
+        if (collisionObject.tag == "Top Wall")
+        {
+            xForce = XisIncreasing ? MinimalForce : -MinimalForce;
+            force = new Vector2(xForce, -MinimalForce) * Speed;
+        }
+
+        if (collisionObject.tag == "Botom Wall")
+        {
+            xForce = XisIncreasing ? MinimalForce : -MinimalForce;
+            force = new Vector2(xForce, MinimalForce) * Speed;
+        }
+
+        if (collisionObject.tag == "StckCorner")
+        {
+            Speed = (float)Math.Pow(Speed, MinimalForce);
+
+            if (collisionObject.name.Contains("Player"))
+            {
+                yForce = YisIncrasing ? MinimalForce : -MinimalForce;
+                force = new Vector2(MinimalForce, yForce) * Speed;
+            }
+        }
+
+        if (collisionObject.tag == "StickMiddle")
+        {
+            if (Speed > initSpeed)
+                Speed = (float)Math.Sqrt(Speed);
+            if (Speed < initSpeed)
+                Speed = initSpeed;
+
+            if (collisionObject.name.Contains("Player"))
+            {
+                yForce = YisIncrasing ? MinimalForce : -MinimalForce;
+                force = new Vector2(MinimalForce, yForce) * Speed;
+            }
+        }
+
+        if (collisionObject.tag.Contains("Side Wall"))
+        {
+            ball.position = Vector2.zero;
+            NewGame();
+            return;
+        }
+
+
+        ball.AddForce(force);
+    }
+
     private void ApplyRandomForce()
     {
         var moveTowardsPlayer = Random.Range(0, 2) == 1 ? true : false;
@@ -44,78 +118,4 @@ public class BallMovemet : MonoBehaviour
         XisIncreasing = ball.position.x > ballPreviousPosition.x;
         YisIncrasing = ball.position.y > ballPreviousPosition.y;
     }
-
-    private void OnTriggerEnter2D(Collider2D collisionObject)
-    {
-        Vector2 force = new Vector2();
-        float xForce;
-        float yForce;
-
-        if (collisionObject.tag == "Top Wall")
-        {
-            xForce = XisIncreasing ? MinimalForce : -MinimalForce;
-            force = new Vector2(xForce, -MinimalForce) * Speed;
-        }
-
-        if (collisionObject.tag == "Botom Wall")
-        {
-            xForce = XisIncreasing ? MinimalForce : -MinimalForce; 
-            force = new Vector2(xForce, MinimalForce) * Speed;
-        }
-
-        if(collisionObject.tag=="StckCorner")
-        {
-            Speed = (float)Math.Pow(Speed, MinimalForce);
-            
-            if(collisionObject.name.Contains("Player"))
-            {
-                yForce = YisIncrasing ? MinimalForce : -MinimalForce;
-                force = new Vector2(MinimalForce, yForce) * Speed;
-            }
-        }
-
-        if(collisionObject.tag=="StickMiddle")
-        {
-            if (Speed > initSpeed)
-                Speed = (float)Math.Sqrt(Speed);
-            if (Speed < initSpeed)
-                Speed = initSpeed;
-
-            if (collisionObject.name.Contains("Player"))
-            {
-                yForce = YisIncrasing ? MinimalForce : -MinimalForce;
-                force = new Vector2(MinimalForce, yForce) * Speed;
-            }
-        }
-
-        if(collisionObject.tag.Contains("Side Wall"))
-        {
-            ball.position = Vector2.zero;
-            NewGame();
-            return;
-        }
-
-
-        ball.AddForce(force);
-    }
-
-    private void NewGame()
-    {
-        ball.position = Vector2.zero;
-        ball.velocity = Vector2.zero;
-        ApplyRandomForce();
-    }
-
-    // Update is called once per frame
-    void Update ()
-    {
-        if (ball.position == ballPreviousPosition)
-        {
-            var yForce = YisIncrasing ? MinimalForce : -MinimalForce;
-            var xForce = XisIncreasing ? MinimalForce : -MinimalForce;
-            ball.AddForce(new Vector2(xForce, yForce));
-        }
-        DecideDirection();
-        ballPreviousPosition = ball.position;
-	}
 }
