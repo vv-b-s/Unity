@@ -7,12 +7,12 @@ using Random = UnityEngine.Random;
 //TODO: Fix Ball strange behavior
 public class BallMovemet : MonoBehaviour
 {
-    public float Speed = 100;
+    public float Speed = 50;
     public float BallRotation = 1;
-    public float MinimalForce = 2;
+    public float MinimalForce = 1.3f;
 
     private Rigidbody2D ball;
-    private float initSpeed;
+    private float initMinForce;
     private bool XisIncreasing;
     private bool YisIncrasing;
     private Vector2 ballPreviousPosition;
@@ -22,11 +22,11 @@ public class BallMovemet : MonoBehaviour
         ball = GetComponent<Rigidbody2D>();
         ApplyRandomForce();
         ball.rotation = 1 * Time.deltaTime;
-        initSpeed = Speed;
+        initMinForce = MinimalForce;
         ballPreviousPosition = ball.position;
 	}
 
-    void FixedUpdate()
+    void Update()
     {
         if (ball.position == ballPreviousPosition)
         {
@@ -48,45 +48,27 @@ public class BallMovemet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collisionObject)
     {
-        Vector2 force = new Vector2();
-        float xForce;
-        float yForce;
-
-        if (collisionObject.tag == "Top Wall")
+        if (collisionObject.tag == "Top Wall"||collisionObject.tag=="Botom Wall")
+            RevertYForce();
+       
+        if (collisionObject.tag == "StickCorner")
         {
-            xForce = XisIncreasing ? MinimalForce : -MinimalForce;
-            force = new Vector2(xForce, -MinimalForce) * Speed;
-        }
-
-        if (collisionObject.tag == "Botom Wall")
-        {
-            xForce = XisIncreasing ? MinimalForce : -MinimalForce;
-            force = new Vector2(xForce, MinimalForce) * Speed;
-        }
-
-        if (collisionObject.tag == "StckCorner")
-        {
-            Speed = (float)Math.Pow(Speed, MinimalForce);
+            MinimalForce = (float)Math.Pow(MinimalForce, 2);
 
             if (collisionObject.name.Contains("Player"))
-            {
-                yForce = YisIncrasing ? MinimalForce : -MinimalForce;
-                force = new Vector2(MinimalForce, yForce) * Speed;
-            }
+                RevertXForce();
+            
         }
 
         if (collisionObject.tag == "StickMiddle")
         {
-            if (Speed > initSpeed)
-                Speed = (float)Math.Sqrt(Speed);
-            if (Speed < initSpeed)
-                Speed = initSpeed;
+            if (MinimalForce > initMinForce)
+                MinimalForce = (float)Math.Sqrt(MinimalForce);
+            if (MinimalForce< initMinForce)
+                MinimalForce = initMinForce;
 
             if (collisionObject.name.Contains("Player"))
-            {
-                yForce = YisIncrasing ? MinimalForce : -MinimalForce;
-                force = new Vector2(MinimalForce, yForce) * Speed;
-            }
+                RevertXForce();
         }
 
         if (collisionObject.tag.Contains("Side Wall"))
@@ -95,9 +77,6 @@ public class BallMovemet : MonoBehaviour
             NewGame();
             return;
         }
-
-
-        ball.AddForce(force);
     }
 
     private void ApplyRandomForce()
@@ -117,5 +96,23 @@ public class BallMovemet : MonoBehaviour
     {
         XisIncreasing = ball.position.x > ballPreviousPosition.x;
         YisIncrasing = ball.position.y > ballPreviousPosition.y;
+    }
+
+    private void RevertXForce()
+    {
+        var xForce = XisIncreasing ? -MinimalForce : MinimalForce;
+        var yForce = YisIncrasing ? MinimalForce : -MinimalForce;
+
+        ball.velocity = Vector2.zero;
+        ball.AddForce(new Vector2(xForce, yForce) * Speed);
+    }
+
+    private void RevertYForce()
+    {
+        var xForce = XisIncreasing ? MinimalForce : -MinimalForce;
+        var yForce = YisIncrasing ? -MinimalForce : MinimalForce;
+
+        ball.velocity = Vector2.zero;
+        ball.AddForce(new Vector2(xForce, yForce) * Speed);
     }
 }
