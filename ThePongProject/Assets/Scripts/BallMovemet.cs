@@ -21,10 +21,9 @@ public class BallMovemet : MonoBehaviour
     void Start ()
     {
         Ball = GetComponent<Rigidbody2D>();
-        ApplyRandomForce();
         initMinForce = MinimalForce;
         ballPreviousPosition = Ball.position;
-        Ball.MoveRotation(BallRotation);
+        NewGame();
     }
 
     void FixedUpdate()
@@ -46,6 +45,7 @@ public class BallMovemet : MonoBehaviour
         Ball.position = Vector2.zero;
         Ball.velocity = Vector2.zero;       // stop the ball
         MinimalForce = initMinForce;
+        Ball.MoveRotation(BallRotation);
 
         ApplyRandomForce();
     }
