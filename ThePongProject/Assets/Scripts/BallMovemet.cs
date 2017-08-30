@@ -11,6 +11,12 @@ public class BallMovemet : MonoBehaviour
     public float MinimalForce = 1f;
     public float SpeedIncrease = 1.5f;
 
+    public static bool GameIsNotOver
+    {
+        get { return CameraAwake.GameIsNotOver; }
+        set { CameraAwake.GameIsNotOver = value; }
+    }
+
     [HideInInspector] public static bool XisIncreasing, YisIncrasing;
     [HideInInspector] public static Rigidbody2D Ball;
 
@@ -47,7 +53,20 @@ public class BallMovemet : MonoBehaviour
         MinimalForce = initMinForce;
         Ball.MoveRotation(BallRotation);
 
+        if (PlayerController.PlayerScores == 3 || ComputerController.ComputerScores == 3)
+        {
+            GameOver();
+        }
         ApplyRandomForce();
+    }
+
+    private void GameOver()
+    {
+        GameIsNotOver = false;
+        if (PlayerController.PlayerScores == 3)
+            PlayerController.IsWinner = true;
+        else ComputerController.IsWinner = true;
+        Destroy(GameObject.Find("Ball(Clone)"));
     }
 
     private void OnTriggerEnter2D(Collider2D collisionObject)
@@ -76,6 +95,11 @@ public class BallMovemet : MonoBehaviour
         if (collisionObject.tag.Contains("Side Wall"))
         {
             Ball.position = Vector2.zero;
+
+            if (collisionObject.name.Contains("Right"))
+                PlayerController.PlayerScores++;
+            else ComputerController.ComputerScores++;
+
             NewGame();
             return;
         }

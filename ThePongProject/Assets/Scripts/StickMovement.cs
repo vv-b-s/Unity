@@ -5,10 +5,15 @@ using UnityEngine;
 
 public abstract class StickMovement : MonoBehaviour
 {
-
     [HideInInspector] public Rigidbody2D Stick;
     [HideInInspector]public float initRotation, initX;
     public float Speed = 50;
+
+    public static bool GameIsNotOver
+    {
+        get { return CameraAwake.GameIsNotOver; }
+        set { CameraAwake.GameIsNotOver = value; }
+    }
 
     // Use this for initialization
     public virtual void Start()

@@ -8,7 +8,12 @@ public class ComputerController : StickMovement
     public float ComputerStickForce = 0.35f;
     public List<GameObject> ComputerPoints;
 
+    public static bool IsWinner = false;
+    public static int ComputerScores = 0;
+
     private Vector2 direction;
+    private Rigidbody2D Ball { get { return BallMovemet.Ball; } }
+    private bool XisIncreasing { get { return BallMovemet.XisIncreasing; } }
 
     public override void Start()
     {
@@ -17,18 +22,22 @@ public class ComputerController : StickMovement
     }
     public override void FixedUpdate()
     {
-        base.FixedUpdate();
-
-        if (BallMovemet.XisIncreasing 
-            && 
-            (BallMovemet.Ball.position.y > ComputerPoints[0].transform.transform.position.y
-            || 
-            BallMovemet.Ball.position.y < ComputerPoints[1].transform.transform.position.y))
+        if(GameIsNotOver || IsWinner)
         {
-            if (Stick.position.y < BallMovemet.Ball.position.y)
-                MoveStick(direction);
-            else
-                MoveStick(-direction);
+            base.FixedUpdate();
+
+            if (XisIncreasing && (Ball.position.y > ComputerPoints[0].transform.transform.position.y || Ball.position.y < ComputerPoints[1].transform.transform.position.y))
+            {
+                if (Stick.position.y < Ball.position.y)
+                    MoveStick(direction);
+                else
+                    MoveStick(-direction);
+            }
         }
+        else
+            {
+                Stick.MoveRotation(1);
+                Stick.AddForce(-Vector2.one);
+            }
     }
 }
