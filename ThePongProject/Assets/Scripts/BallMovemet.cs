@@ -4,45 +4,49 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-//TODO: Fix Ball strange behavior
 public class BallMovemet : MonoBehaviour
 {
     public float Speed = 50;
     public float BallRotation = 1;
-    public float MinimalForce = 1.3f;
+    public float MinimalForce = 1f;
+    public float SpeedIncrease = 1.5f;
 
-    private Rigidbody2D ball;
+    [HideInInspector] public static bool XisIncreasing, YisIncrasing;
+    [HideInInspector] public static Rigidbody2D Ball;
+
     private float initMinForce;
-    private bool XisIncreasing;
-    private bool YisIncrasing;
     private Vector2 ballPreviousPosition;
+    private Vector2 force = Vector2.zero;
 
     void Start ()
     {
-        ball = GetComponent<Rigidbody2D>();
+        Ball = GetComponent<Rigidbody2D>();
         ApplyRandomForce();
-        ball.rotation = 1 * Time.deltaTime;
         initMinForce = MinimalForce;
-        ballPreviousPosition = ball.position;
-	}
+        ballPreviousPosition = Ball.position;
+        Ball.MoveRotation(BallRotation);
+    }
 
-    void Update()
+    void FixedUpdate()
     {
-        if (ball.position == ballPreviousPosition)
+        if (Ball.position == ballPreviousPosition)
         {
-            var yForce = YisIncrasing ? MinimalForce : -MinimalForce;
-            var xForce = XisIncreasing ? MinimalForce : -MinimalForce;
-            ball.AddForce(new Vector2(xForce, yForce));
+            force.x = XisIncreasing ? MinimalForce : -MinimalForce;
+            force.y = YisIncrasing ? MinimalForce : -MinimalForce;
+
+            Ball.AddForce(force);
         }
         DecideDirection();
-        ballPreviousPosition = ball.position;
+        ballPreviousPosition = Ball.position;
     }
 
 
     private void NewGame()
     {
-        ball.position = Vector2.zero;
-        ball.velocity = Vector2.zero;
+        Ball.position = Vector2.zero;
+        Ball.velocity = Vector2.zero;       // stop the ball
+        MinimalForce = initMinForce;
+
         ApplyRandomForce();
     }
 
@@ -53,27 +57,25 @@ public class BallMovemet : MonoBehaviour
        
         if (collisionObject.tag == "StickCorner")
         {
-            MinimalForce = (float)Math.Pow(MinimalForce, 2);
+            MinimalForce *= SpeedIncrease;
 
-            if (collisionObject.name.Contains("Player"))
-                RevertXForce();
+            RevertXForce();
             
         }
 
         if (collisionObject.tag == "StickMiddle")
         {
             if (MinimalForce > initMinForce)
-                MinimalForce = (float)Math.Sqrt(MinimalForce);
+                MinimalForce /= SpeedIncrease;
             if (MinimalForce< initMinForce)
                 MinimalForce = initMinForce;
 
-            if (collisionObject.name.Contains("Player"))
                 RevertXForce();
         }
 
         if (collisionObject.tag.Contains("Side Wall"))
         {
-            ball.position = Vector2.zero;
+            Ball.position = Vector2.zero;
             NewGame();
             return;
         }
@@ -84,35 +86,35 @@ public class BallMovemet : MonoBehaviour
         var moveTowardsPlayer = Random.Range(0, 2) == 1 ? true : false;
         var moveUp = Random.Range(0, 2) == 1 ? true : false;
 
-        var xForce = moveTowardsPlayer ? -MinimalForce : MinimalForce;
-        var yForce = moveUp ? MinimalForce : -MinimalForce;
+        force.x = moveTowardsPlayer ? -MinimalForce : MinimalForce;
+        force.y = moveUp ? MinimalForce : -MinimalForce;
 
-        var randomForce = new Vector2(xForce, yForce);
+        var randomForce = force;
 
-        ball.AddForce(randomForce * Speed);
+        Ball.AddForce(randomForce * Speed);
     }
 
     private void DecideDirection()
     {
-        XisIncreasing = ball.position.x > ballPreviousPosition.x;
-        YisIncrasing = ball.position.y > ballPreviousPosition.y;
+        XisIncreasing = Ball.position.x > ballPreviousPosition.x || force.x > 0;
+        YisIncrasing = Ball.position.y > ballPreviousPosition.y || force.y > 0;
     }
 
     private void RevertXForce()
     {
-        var xForce = XisIncreasing ? -MinimalForce : MinimalForce;
-        var yForce = YisIncrasing ? MinimalForce : -MinimalForce;
+        force.x = XisIncreasing ? -MinimalForce : MinimalForce;
+        force.y = YisIncrasing ? MinimalForce : -MinimalForce;
 
-        ball.velocity = Vector2.zero;
-        ball.AddForce(new Vector2(xForce, yForce) * Speed);
+        Ball.velocity = Vector2.zero;
+        Ball.AddForce(force * Speed);
     }
 
     private void RevertYForce()
     {
-        var xForce = XisIncreasing ? MinimalForce : -MinimalForce;
-        var yForce = YisIncrasing ? -MinimalForce : MinimalForce;
+        force.x = XisIncreasing ? MinimalForce : -MinimalForce;
+        force.y = YisIncrasing ? -MinimalForce : MinimalForce;
 
-        ball.velocity = Vector2.zero;
-        ball.AddForce(new Vector2(xForce, yForce) * Speed);
+        Ball.velocity = Vector2.zero;
+        Ball.AddForce(force * Speed);
     }
 }

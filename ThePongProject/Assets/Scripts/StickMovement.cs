@@ -18,7 +18,14 @@ public abstract class StickMovement : MonoBehaviour
         initX = Stick.position.x;
     }
 
-    public abstract void FixedUpdate();
+    public virtual void FixedUpdate()
+    {
+        if (Stick.rotation != initRotation)           // Keeps ridgid body from rotating spontaneously
+            Stick.rotation = initRotation;
+
+        if (Stick.position.x != initX)             // Prevent stick from moving away if it colides with the ball
+            Stick.position = new Vector2(initX, Stick.position.y);
+    }
 
     public void MoveStick(Vector2 movement)
     {

@@ -8,11 +8,7 @@ public class PlayerController : StickMovement
     {
         float verticalMovement = Input.GetAxis("Vertical");
 
-        if (Stick.rotation != initRotation)           // Keeps ridgid body from rotating spontaneously
-            Stick.rotation = initRotation;
-
-        if (Stick.position.x != initX)             // Prevent stick from moving away if it colides with the ball
-            Stick.position = new Vector2(initX, Stick.position.y);
+        base.FixedUpdate();
 
         if (verticalMovement > 0 || verticalMovement < 0)
         {
