@@ -14,8 +14,8 @@ public class CameraAwake : MonoBehaviour
     }
 
     private void LateUpdate()
-    {
-        //http://answers.unity3d.com/questions/760671/resizing-orthographic-camera-to-fit-2d-sprite-on-s.html
+    {    // Keep the screen resolution alwys showing the game scene
+        // http://answers.unity3d.com/questions/760671/resizing-orthographic-camera-to-fit-2d-sprite-on-s.html
         Camera.main.orthographicSize = VisibleWidth * Screen.height / Screen.width * 0.5f;
     }
 }

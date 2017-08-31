@@ -9,7 +9,8 @@ public class PlayerController : StickMovement
 
     public override void FixedUpdate()
     {
-        if (GameIsNotOver || IsWinner) 
+        // If the game is over the stick should go nuts (Returning the normal physics of the object)
+        if (GameIsNotOver || IsWinner)
         {
             float verticalMovement = Input.GetAxis("Vertical");
 
@@ -24,9 +25,6 @@ public class PlayerController : StickMovement
                 Stick.velocity = Vector2.zero;
         }
         else
-        {
-            Stick.MoveRotation(1);
-            Stick.AddForce(Vector2.one);
-        }
+            BreakTheLaws(1);
     }
 }

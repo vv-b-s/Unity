@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class ScoreController : MonoBehaviour
 {
+    public GameObject GameOverSign;
+    public GameObject Divider;
     public GameObject[] PlayerScoresPrefab;
     public GameObject[] ComputerScoresPrefab;
 
@@ -22,11 +24,17 @@ public class ScoreController : MonoBehaviour
     {
 
         DeactivateAllScores();
-        if (PlayerScores >= 0 && PlayerScores <= 2 && ComputerScores >= 0 && ComputerScores <= 2) 
+        if (PlayerScores >= 0 && PlayerScores <= 2 && ComputerScores >= 0 && ComputerScores <= 2)
         {
             PlayerScoresPrefab[PlayerScores].SetActive(true);
             ComputerScoresPrefab[ComputerScores].SetActive(true);
         }
+        else
+        {
+            GameOverSign.SetActive(true);
+            Divider.SetActive(false);
+        }
+
     }
 
     private void DeactivateAllScores()

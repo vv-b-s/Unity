@@ -6,14 +6,10 @@ using UnityEngine;
 public abstract class StickMovement : MonoBehaviour
 {
     [HideInInspector] public Rigidbody2D Stick;
-    [HideInInspector]public float initRotation, initX;
+    [HideInInspector] public float initRotation, initX;
     public float Speed = 50;
 
-    public static bool GameIsNotOver
-    {
-        get { return CameraAwake.GameIsNotOver; }
-        set { CameraAwake.GameIsNotOver = value; }
-    }
+    public bool GameIsNotOver { get { return CameraAwake.GameIsNotOver; } }
 
     // Use this for initialization
     public virtual void Start()
@@ -25,15 +21,27 @@ public abstract class StickMovement : MonoBehaviour
 
     public virtual void FixedUpdate()
     {
-        if (Stick.rotation != initRotation)           // Keeps ridgid body from rotating spontaneously
+        // Keeps ridgid body from rotating spontaneously
+        if (Stick.rotation != initRotation)
             Stick.rotation = initRotation;
 
-        if (Stick.position.x != initX)             // Prevent stick from moving away if it colides with the ball
+        // Prevent stick from moving away if it colides with the ball
+        if (Stick.position.x != initX)
             Stick.position = new Vector2(initX, Stick.position.y);
     }
 
     public void MoveStick(Vector2 movement)
     {
-        Stick.velocity = movement*Speed;
+        Stick.velocity = movement * Speed;
+    }
+
+    /// <summary>
+    /// Destroys the written laws in a fun way
+    /// </summary>
+    /// <param name="positiveOrNegative"></param>
+    public virtual void BreakTheLaws(int positiveOrNegative)
+    {
+        Stick.rotation = UnityEngine.Random.Range(0, 1f);
+        Stick.AddForce(positiveOrNegative >= 0 ? Vector2.one : -Vector2.one);
     }
 }
