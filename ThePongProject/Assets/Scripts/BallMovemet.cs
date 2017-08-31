@@ -1,17 +1,22 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class BallMovemet : MonoBehaviour
 {
+    #region Public Variables
     public float Speed = 50;
     public float BallRotation = 1;
     public float MinimalForce = 1f;
     public float SpeedIncrease = 1.5f;
+    public List<AudioClip> Sounds; 
+    #endregion
 
-    public AudioSource BumpSound;
+    private AudioSource sound;
+    
 
     // Make shorter access to the variable
     public static bool GameIsNotOver
@@ -35,8 +40,11 @@ public class BallMovemet : MonoBehaviour
     void Start ()
     {
         Ball = GetComponent<Rigidbody2D>();
+        sound = GetComponent<AudioSource>();
+
         initMinForce = MinimalForce;
         ballPreviousPosition = Ball.position;
+
         NewGame();
     }
 
@@ -68,6 +76,8 @@ public class BallMovemet : MonoBehaviour
         Ball.velocity = Vector2.zero;       // stop the ball
         MinimalForce = initMinForce;
         Ball.MoveRotation(BallRotation);
+
+        sound.clip = Sounds.Find(s => s.name == "bump");
 
         ApplyRandomForce();
     }
@@ -139,14 +149,14 @@ public class BallMovemet : MonoBehaviour
         if (collisionObject.tag == "Top Wall" || collisionObject.tag == "Botom Wall")
         {
             RevertYForce();
-            BumpSound.Play();
+            sound.Play();
         }
 
         if (collisionObject.tag == "StickCorner")
         {
             // Speed up the ball due to collision with small surface
             MinimalForce *= SpeedIncrease;
-            BumpSound.Play();
+            sound.Play();
 
             RevertXForce();
         }
@@ -159,7 +169,7 @@ public class BallMovemet : MonoBehaviour
             if (MinimalForce < initMinForce)
                 MinimalForce = initMinForce;
 
-            BumpSound.Play();
+            sound.Play();
 
             RevertXForce();
         }
