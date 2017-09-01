@@ -6,6 +6,17 @@ public class PlayerController : StickMovement
 {
     public static int PlayerScores = 0;
     public static bool IsWinner = false;
+    public List<AudioClip> Sounds;
+
+    // Static members used so the sound can be modified from other classes
+    private static AudioSource sound;
+    private static List<AudioClip> sounds;
+
+    private void Awake()
+    {
+        sounds = Sounds;
+        sound = GetComponent<AudioSource>();
+    }
 
     public override void FixedUpdate()
     {
@@ -26,5 +37,14 @@ public class PlayerController : StickMovement
         }
         else
             BreakTheLaws(1);
+    }
+
+    public static void PlayScoreSound()
+    {
+       if(PlayerScores<3)
+        {
+            sound.clip = sounds.Find(s => s.name == "playerScore");
+            sound.Play();
+        }
     }
 }

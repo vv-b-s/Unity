@@ -6,7 +6,7 @@ using UnityEngine;
 public abstract class StickMovement : MonoBehaviour
 {
     [HideInInspector] public Rigidbody2D Stick;
-    [HideInInspector] public float initRotation, initX;
+    [HideInInspector] public float initX;
     public float Speed = 50;
 
     public bool GameIsNotOver { get { return CameraAwake.GameIsNotOver; } }
@@ -15,15 +15,14 @@ public abstract class StickMovement : MonoBehaviour
     public virtual void Start()
     {
         Stick = GetComponent<Rigidbody2D>();
-        initRotation = Stick.rotation;
         initX = Stick.position.x;
     }
 
     public virtual void FixedUpdate()
     {
         // Keeps ridgid body from rotating spontaneously
-        if (Stick.rotation != initRotation)
-            Stick.rotation = initRotation;
+        if (Stick.rotation != 0)
+            Stick.rotation = 0;
 
         // Prevent stick from moving away if it colides with the ball
         if (Stick.position.x != initX)

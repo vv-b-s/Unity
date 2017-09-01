@@ -180,8 +180,15 @@ public class BallMovemet : MonoBehaviour
             Ball.position = Vector2.zero;
 
             if (collisionObject.name.Contains("Right"))
+            {
                 PlayerController.PlayerScores++;
-            else ComputerController.ComputerScores++;
+                PlayerController.PlayScoreSound();
+            }
+            else
+            {
+                ComputerController.ComputerScores++;
+                ComputerController.PlayScoreSound();
+            }
 
             NewGame();
             return;

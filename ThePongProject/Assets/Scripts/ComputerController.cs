@@ -6,8 +6,19 @@ using UnityEngine;
 public class ComputerController : StickMovement
 {
     public float ComputerStickForce = 0.35f;
+    public List<AudioClip> Sounds;
 
-     // Keeps the upper and lower point of the computer's Stick so it can decide if it is in the range of the ball
+    // Static members used so the sound can be modified from other classes
+    private static AudioSource sound;
+    private static List<AudioClip> sounds;
+
+    private void Awake()
+    {
+        sounds = Sounds;
+        sound = GetComponent<AudioSource>();
+    }
+
+    // Keeps the upper and lower point of the computer's Stick so it can decide if it is in the range of the ball
     // without smoorh movements
     public List<GameObject> ComputerPoints;
 
@@ -46,5 +57,14 @@ public class ComputerController : StickMovement
         }
         else
             BreakTheLaws(-1);
+    }
+
+    public static void PlayScoreSound()
+    {
+        if(ComputerScores<3)
+        {
+            sound.clip = sounds.Find(s => s.name == "computerScore");
+            sound.Play();
+        }
     }
 }
